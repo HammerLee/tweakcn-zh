@@ -19,6 +19,8 @@
 
 <br />
 
+> **关于本仓库**：这是 [jnsahaj/tweakcn](https://github.com/jnsahaj/tweakcn) 的中文本地化分支，在原版基础上增加了中文界面切换、从单个颜色生成整套主题等功能，并针对本地离线使用做了适配。原项目以 Apache License 2.0 授权，版权归原作者所有。中文使用说明见 [使用教程.md](使用教程.md)。
+
 **[tweakcn](https://tweakcn.com)** is a powerful Visual Theme Editor for tailwind CSS & shadcn/ui components. It comes with Beautiful theme presets to get started, while aiming to offer advanced customisation for each aspect of your UI
 
 ![tweakcn.com](public/og-image.v050725.png)
