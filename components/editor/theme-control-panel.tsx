@@ -1,29 +1,22 @@
 "use client";
 
-import { AlertCircle, Sparkle } from "lucide-react";
 import React from "react";
 
-import { ChatInterface } from "@/components/editor/ai/chat-interface";
 import { ColorsTabContent } from "@/components/editor/colors-tab-content";
 import ControlSection from "@/components/editor/control-section";
-import { FontPicker } from "@/components/editor/font-picker";
 import HslAdjustmentControls from "@/components/editor/hsl-adjustment-controls";
 import ShadowControl from "@/components/editor/shadow-control";
 import { SliderWithInput } from "@/components/editor/slider-with-input";
 import ThemePresetSelect from "@/components/editor/theme-preset-select";
 import TabsTriggerPill from "@/components/editor/theme-preview/tabs-trigger-pill";
 import { HorizontalScrollArea } from "@/components/horizontal-scroll-area";
+import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList } from "@/components/ui/tabs";
 import { COMMON_STYLES, defaultThemeState } from "@/config/theme";
-import { useAIThemeGenerationCore } from "@/hooks/use-ai-theme-generation-core";
 import { useControlsTabFromUrl, type ControlTab } from "@/hooks/use-controls-tab-from-url";
-import { useEditorStore } from "@/store/editor-store";
-import { type FontInfo } from "@/types/fonts";
 import { ThemeStyles, ThemeStyleProps } from "@/types/theme";
-import { buildFontFamily } from "@/utils/fonts";
-import { getAppliedThemeFont } from "@/utils/theme-fonts";
 
 interface ThemeControlPanelProps {
   styles: ThemeStyles;
@@ -32,9 +25,7 @@ interface ThemeControlPanelProps {
 }
 
 const ThemeControlPanel = ({ styles, currentMode, onChange }: ThemeControlPanelProps) => {
-  const { themeState } = useEditorStore();
   const { tab, handleSetTab } = useControlsTabFromUrl();
-  const { isGeneratingTheme } = useAIThemeGenerationCore();
 
   const currentStyles = React.useMemo(
     () => ({
@@ -90,7 +81,7 @@ const ThemeControlPanel = ({ styles, currentMode, onChange }: ThemeControlPanelP
   return (
     <>
       <div className="border-b">
-        <ThemePresetSelect className="h-14 rounded-none" disabled={isGeneratingTheme} />
+        <ThemePresetSelect className="h-14 rounded-none" />
       </div>
       <div className="flex min-h-0 flex-1 flex-col space-y-4">
         <Tabs
@@ -103,15 +94,6 @@ const ThemeControlPanel = ({ styles, currentMode, onChange }: ThemeControlPanelP
               <TabsTriggerPill value="colors">Colors</TabsTriggerPill>
               <TabsTriggerPill value="typography">Typography</TabsTriggerPill>
               <TabsTriggerPill value="other">Other</TabsTriggerPill>
-              <TabsTriggerPill
-                value="ai"
-                className="data-[state=active]:[--effect:var(--secondary-foreground)] data-[state=active]:[--foreground:var(--muted-foreground)] data-[state=active]:[--muted-foreground:var(--effect)]"
-              >
-                <Sparkle className="mr-1 size-3.5 text-current" />
-                <span className="animate-text via-foreground from-muted-foreground to-muted-foreground flex items-center gap-1 bg-gradient-to-r from-50% via-60% to-100% bg-[200%_auto] bg-clip-text text-sm text-transparent">
-                  Generate
-                </span>
-              </TabsTriggerPill>
             </TabsList>
           </HorizontalScrollArea>
 
@@ -121,71 +103,45 @@ const ThemeControlPanel = ({ styles, currentMode, onChange }: ThemeControlPanelP
 
           <TabsContent value="typography" className="mt-1 size-full overflow-hidden">
             <ScrollArea className="h-full px-4">
-              <div className="text-muted-foreground mb-2 flex items-center gap-2 text-[11px]">
-                <AlertCircle className="size-3.5 shrink-0" />
-                <p>
-                  Custom fonts require embedding.{" "}
-                  <a
-                    href="https://tailwindcss.com/docs/font-family"
-                    target="_blank"
-                    className="text-foreground/70 hover:text-foreground underline underline-offset-2 transition-colors"
-                  >
-                    Learn more
-                  </a>
-                </p>
-              </div>
-
               <ControlSection title="Font Family" expanded>
                 <div className="space-y-1.5">
                   <div className="flex items-center gap-2">
                     <Label htmlFor="font-sans" className="text-muted-foreground w-16 shrink-0 text-[11px] font-medium">
                       Sans-Serif
                     </Label>
-                    <div className="min-w-0 flex-1">
-                      <FontPicker
-                        value={getAppliedThemeFont(themeState, "font-sans") || undefined}
-                        category="sans-serif"
-                        placeholder="Sans-serif font..."
-                        onSelect={(font: FontInfo) => {
-                          const fontFamily = buildFontFamily(font.family, font.category);
-                          updateStyle("font-sans", fontFamily);
-                        }}
-                      />
-                    </div>
+                    <Input
+                      id="font-sans"
+                      value={currentStyles["font-sans"] ?? ""}
+                      onChange={(e) => updateStyle("font-sans", e.target.value)}
+                      placeholder="system-ui, sans-serif"
+                      className="h-8 font-mono text-xs"
+                    />
                   </div>
 
                   <div className="flex items-center gap-2">
                     <Label htmlFor="font-serif" className="text-muted-foreground w-16 shrink-0 text-[11px] font-medium">
                       Serif
                     </Label>
-                    <div className="min-w-0 flex-1">
-                      <FontPicker
-                        value={getAppliedThemeFont(themeState, "font-serif") || undefined}
-                        category="serif"
-                        placeholder="Serif font..."
-                        onSelect={(font: FontInfo) => {
-                          const fontFamily = buildFontFamily(font.family, font.category);
-                          updateStyle("font-serif", fontFamily);
-                        }}
-                      />
-                    </div>
+                    <Input
+                      id="font-serif"
+                      value={currentStyles["font-serif"] ?? ""}
+                      onChange={(e) => updateStyle("font-serif", e.target.value)}
+                      placeholder="Georgia, serif"
+                      className="h-8 font-mono text-xs"
+                    />
                   </div>
 
                   <div className="flex items-center gap-2">
                     <Label htmlFor="font-mono" className="text-muted-foreground w-16 shrink-0 text-[11px] font-medium">
                       Mono
                     </Label>
-                    <div className="min-w-0 flex-1">
-                      <FontPicker
-                        value={getAppliedThemeFont(themeState, "font-mono") || undefined}
-                        category="monospace"
-                        placeholder="Monospace font..."
-                        onSelect={(font: FontInfo) => {
-                          const fontFamily = buildFontFamily(font.family, font.category);
-                          updateStyle("font-mono", fontFamily);
-                        }}
-                      />
-                    </div>
+                    <Input
+                      id="font-mono"
+                      value={currentStyles["font-mono"] ?? ""}
+                      onChange={(e) => updateStyle("font-mono", e.target.value)}
+                      placeholder="ui-monospace, monospace"
+                      className="h-8 font-mono text-xs"
+                    />
                   </div>
                 </div>
               </ControlSection>
@@ -254,10 +210,6 @@ const ThemeControlPanel = ({ styles, currentMode, onChange }: ThemeControlPanelP
                 />
               </ControlSection>
             </ScrollArea>
-          </TabsContent>
-
-          <TabsContent value="ai" className="mt-1 size-full overflow-hidden">
-            <ChatInterface />
           </TabsContent>
         </Tabs>
       </div>

@@ -9,6 +9,7 @@ import { Theme, ThemeStyles } from "@/types/theme";
 import { Sliders } from "lucide-react";
 import React, { use, useEffect } from "react";
 import { ActionBar } from "./action-bar/action-bar";
+import { GenerateFromColorButton } from "./action-bar/components/generate-from-color-button";
 import ThemeControlPanel from "./theme-control-panel";
 import ThemePreviewPanel from "./theme-preview-panel";
 
@@ -80,6 +81,9 @@ const Editor: React.FC<EditorProps> = ({ themePromise }) => {
               </TabsList>
               <TabsContent value="controls" className="mt-0 h-[calc(100%-2.5rem)]">
                 <div className="flex h-full flex-col">
+                  <div className="flex items-center border-b px-2 py-1.5">
+                    <GenerateFromColorButton alwaysShowLabel />
+                  </div>
                   <ThemeControlPanel
                     styles={styles}
                     onChange={handleStyleChange}

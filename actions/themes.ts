@@ -81,6 +81,10 @@ export async function getThemes() {
       .where(eq(themeTable.userId, userId));
     return userThemes;
   } catch (error) {
+    // Local runs have no auth/DB configured: treat "not logged in" as an empty cloud theme list.
+    if ((error as Error).name === "UnauthorizedError") {
+      return [];
+    }
     logError(error as Error, { action: "getThemes" });
     throw error;
   }

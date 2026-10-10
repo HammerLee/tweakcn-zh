@@ -6,6 +6,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { ThemeScript } from "@/components/theme-script";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import ZhToggle from "@/components/zh-toggle";
 import { ChatProvider } from "@/hooks/use-chat-context";
 import { QueryProvider } from "@/lib/query-client";
 import type { Metadata, Viewport } from "next";
@@ -94,6 +95,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           </Suspense>
         </NuqsAdapter>
         <PostHogInit />
+        <ZhToggle />
       </body>
     </html>
   );
