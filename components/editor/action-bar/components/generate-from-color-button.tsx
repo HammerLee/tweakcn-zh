@@ -24,7 +24,6 @@ import {
 } from "@/components/ui/select";
 import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
-import { TooltipWrapper } from "@/components/tooltip-wrapper";
 import {
   generateTheme,
   parseColor,

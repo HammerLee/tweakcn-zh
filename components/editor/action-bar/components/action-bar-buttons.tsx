@@ -8,7 +8,6 @@ import { MoreOptions } from "./more-options";
 import { ResetButton } from "./reset-button";
 import { ThemeToggle } from "./theme-toggle";
 import { UndoRedoButtons } from "./undo-redo-buttons";
-import { useMemo } from "react";
 
 interface ActionBarButtonsProps {
   onImportClick: () => void;

@@ -6,7 +6,7 @@
 
 | 事项 | 说明 |
 |---|---|
-| 提交要加 `--no-verify` | 本机没装 Node.js，pre-commit 钩子跑不了 `npm run lint`。装上 Node 之后就可以去掉这个参数 |
+| 提交会先跑 lint | 已装 Node.js v24（位于 `~/.local/node`），pre-commit 钩子会执行 `next lint`：**有 Error 就提交失败**，Warning 不拦截。只有修不掉又必须提交时才临时加 `--no-verify` |
 | 推送走 SSH 的 443 端口 | `github.com` 的 443 直连不通。`~/.ssh/config` 已把 `github.com` 映射到 `ssh.github.com:443`，**不要把 remote 改回 `https://` 开头的地址** |
 | `upstream` 是只读镜像 | 指向 gh-proxy.com 代理的原项目，只能 `fetch`，不能 `push` |
 
@@ -17,7 +17,7 @@ cd /Users/joey/workspace/tutorial/tweakcn
 
 git status                  # 1. 看改了什么（红=未暂存，绿=已暂存）
 git add 文件路径             # 2. 挑选要提交的文件，可以写多个
-git commit --no-verify -m "feat: 一句话说明改动"   # 3. 固化成一个提交
+git commit -m "feat: 一句话说明改动"   # 3. 固化成一个提交（钩子会跑 lint）
 git push                    # 4. 推到 GitHub（已绑定，不用带参数）
 ```
 
@@ -39,7 +39,7 @@ git remote -v               # 看远程地址（origin=你的仓库，upstream=�
 ```bash
 git restore 文件路径          # 安全：丢弃工作区改动，回到上次提交的样子
 git restore --staged 文件路径  # 安全：把已 add 的文件退回未暂存，内容不丢
-git commit --amend --no-verify  # 中等：修改「最近一次」提交，仅限还没 push 时
+git commit --amend              # 中等：修改「最近一次」提交，仅限还没 push 时
 git reset --hard HEAD~1     # 危险：丢弃最近一次提交及其改动，找不回来
 ```
 
@@ -54,7 +54,7 @@ git push                    # 推上去
 ```
 
 遇到冲突：打开冲突文件搜索 `<<<<<<<`，手动保留想要的内容、删掉所有标记行，然后
-`git add 冲突文件 && git commit --no-verify`。
+`git add 冲突文件 && git commit`。
 
 ## 5. 常见报错对照
 
@@ -62,7 +62,7 @@ git push                    # 推上去
 |---|---|---|
 | `Failed to connect to github.com port 443` | 用了 https:// 地址，被墙 | `git remote -v` 确认是 `git@github.com:...` |
 | `remote unpack failed: index-pack failed` | 多半是浅克隆缺历史 | `git fetch --unshallow upstream` 后重推 |
-| `husky - pre-commit script failed (code 127)` | 没装 Node.js | 提交加 `--no-verify`，或安装 Node.js |
+| `husky - pre-commit script failed (code 127)` | 当前进程 PATH 里没有 node（从 Dock 启动的 GUI 工具常这样，它们不读 `~/.zshrc`） | 终端里提交一般正常；GUI 里遇到就执行 `sudo ln -s ~/.local/node/bin/* /usr/local/bin/`，或改从终端启动该工具 |
 | `Updates were rejected ... non-fast-forward` | 远程有你本地没有的提交 | 先 `git pull` 再 `git push` |
 | `Permission denied (publickey)` | SSH 密钥没被认可 | `ssh -T git@github.com` 看提示；确认公钥已添加到 GitHub |
 
