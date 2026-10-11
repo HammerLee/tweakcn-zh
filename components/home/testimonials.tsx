@@ -1,7 +1,7 @@
 "use client";
 
 import { Card, CardContent } from "@/components/ui/card";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { motion, useMotionValue, useReducedMotion } from "motion/react";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
@@ -199,7 +199,7 @@ const MarqueeRow = ({
               <CardContent className="flex h-full w-[300px] flex-col gap-4 p-4 md:w-[400px]">
                 <div className="flex items-center gap-3">
                   <Avatar className="h-12 w-12">
-                    <AvatarImage src={testimonial.image} alt={testimonial.name} loading="lazy" />
+                    {/* 离线：不加载 pbs.twimg.com 头像，直接用首字母占位 */}
                     <AvatarFallback className="bg-primary text-primary-foreground text-lg font-semibold">
                       {testimonial.name.charAt(0)}
                     </AvatarFallback>

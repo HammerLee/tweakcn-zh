@@ -18,7 +18,7 @@ import {
   SelectValue,
   SelectItem,
 } from "@/components/ui/select";
-import { usePostHog } from "posthog-js/react";
+import { useAnalytics } from "@/lib/analytics";
 import { useEditorStore } from "@/store/editor-store";
 import { usePreferencesStore } from "@/store/preferences-store";
 import {
@@ -29,6 +29,7 @@ import {
 import { useThemePresetStore } from "@/store/theme-preset-store";
 import { useDialogActions } from "@/hooks/use-dialog-actions";
 import { ColorFormat } from "@/types";
+import { getAppOrigin } from "@/lib/app-url";
 
 interface CodePanelProps {
   themeEditorState: ThemeEditorState;
@@ -39,7 +40,7 @@ const CodePanel: React.FC<CodePanelProps> = ({ themeEditorState, themeId }) => {
   const [registryCopied, setRegistryCopied] = useState(false);
   const [copied, setCopied] = useState(false);
   const [activeTab, setActiveTab] = useState<string>("index.css");
-  const posthog = usePostHog();
+  const posthog = useAnalytics();
   const { handleSaveClick } = useDialogActions();
 
   const preset = useEditorStore((state) => state.themeState.preset);
@@ -62,8 +63,8 @@ const CodePanel: React.FC<CodePanelProps> = ({ themeEditorState, themeId }) => {
 
   const getRegistryCommand = (id: string, isSaved: boolean) => {
     const url = isSaved
-      ? `https://tweakcn.com/r/themes/${id}`
-      : `https://tweakcn.com/r/themes/${id}.json`;
+      ? `${getAppOrigin()}/r/themes/${id}`
+      : `${getAppOrigin()}/r/themes/${id}.json`;
     switch (packageManager) {
       case "pnpm":
         return `pnpm dlx shadcn@latest add ${url}`;

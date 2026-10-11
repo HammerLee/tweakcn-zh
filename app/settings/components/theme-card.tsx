@@ -54,6 +54,7 @@ import {
 import Link from "next/link";
 import { toast } from "@/components/ui/use-toast";
 import { ThemePreview } from "@/components/theme-preview";
+import { getAppOrigin } from "@/lib/app-url";
 
 interface ThemeCardProps {
   theme: Theme;
@@ -97,7 +98,7 @@ export function ThemeCard({
   };
 
   const handleShare = () => {
-    const url = `https://tweakcn.com/themes/${theme.id}`;
+    const url = `${getAppOrigin()}/themes/${theme.id}`;
     navigator.clipboard.writeText(url);
     toast({
       title: "Theme URL copied to clipboard!",

@@ -4,42 +4,6 @@ import { defaultDarkThemeStyles, defaultLightThemeStyles } from "@/config/theme"
 
 export function ThemeScript() {
   const scriptContent = `
-    // ----- FONT LOADING UTILITIES -----
-    const DEFAULT_FONT_WEIGHTS = ["400"];
-
-    function extractFontFamily(fontFamilyValue) {
-      if (!fontFamilyValue) return null;
-      const firstFont = fontFamilyValue.split(",")[0].trim();
-      const cleanFont = firstFont.replace(/['"]/g, "");
-      const systemFonts = [
-        "ui-sans-serif", "ui-serif", "ui-monospace", "system-ui",
-        "sans-serif", "serif", "monospace", "cursive", "fantasy"
-      ];
-      if (systemFonts.includes(cleanFont.toLowerCase())) {
-        return null;
-      }
-      return cleanFont;
-    }
-
-    function buildFontCssUrl(family, weights) {
-      weights = weights || DEFAULT_FONT_WEIGHTS;
-      const encodedFamily = encodeURIComponent(family);
-      const weightsParam = weights.join(";"); 
-      return \`https://fonts.googleapis.com/css2?family=\${encodedFamily}:wght@\${weightsParam}&display=swap\`;
-    }
-
-    function loadGoogleFont(family, weights) {
-      weights = weights || DEFAULT_FONT_WEIGHTS;
-      const href = buildFontCssUrl(family, weights);
-      const existing = document.querySelector(\`link[href="\${href}"]\`);
-      if (existing) return;
-
-      const link = document.createElement("link");
-      link.rel = "stylesheet";
-      link.href = href;
-      document.head.appendChild(link);
-    }
-
     // ----- THEME INITIALIZATION -----
     (function() {
       const storageKey = "editor-storage";
@@ -75,25 +39,8 @@ export function ThemeScript() {
         }
       }
 
-      // Load Google fonts *immediately*
-      try {
-        if (activeStyles) {
-          const currentFonts = {
-            sans: activeStyles["font-sans"],
-            serif: activeStyles["font-serif"],
-            mono: activeStyles["font-mono"],
-          };
-
-          Object.entries(currentFonts).forEach(([_type, fontValue]) => {
-            const fontFamily = extractFontFamily(fontValue);
-            if (fontFamily) {
-              loadGoogleFont(fontFamily, DEFAULT_FONT_WEIGHTS);
-            }
-          });
-        }
-      } catch (e) {
-        console.warn("Theme Script initialization: Failed to load Google fonts:", e);
-      }
+      // 字体不需要运行时加载：/fonts/fonts.css 已在 <head> 里静态引入，
+      // 浏览器会按 unicode-range 自己取用到的 woff2（全部本地，见 public/fonts/）。
     })();
   `;
 

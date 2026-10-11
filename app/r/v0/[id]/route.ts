@@ -23,7 +23,14 @@ export async function GET(_req: Request, { params }: { params: Promise<{ id: str
     }
 
     // Fall back to database lookup for user-saved themes
+    // 离线版没有云数据库，取不到就是 404。
     const theme = await getTheme(id);
+    if (!theme) {
+      return new NextResponse(JSON.stringify({ error: `Theme ${id} not found` }), {
+        status: 404,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
     const payload = generateV0RegistryPayload(theme.name, theme.styles);
 
     return new NextResponse(JSON.stringify(payload), {

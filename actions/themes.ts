@@ -81,12 +81,12 @@ export async function getThemes() {
       .where(eq(themeTable.userId, userId));
     return userThemes;
   } catch (error) {
-    // Local runs have no auth/DB configured: treat "not logged in" as an empty cloud theme list.
+    // 本地离线版：未登录、没配 DATABASE_URL、或连不上云数据库，都按"没有云端主题"处理。
     if ((error as Error).name === "UnauthorizedError") {
       return [];
     }
     logError(error as Error, { action: "getThemes" });
-    throw error;
+    return [];
   }
 }
 
@@ -104,8 +104,10 @@ export const getTheme = cache(async (themeId: string) => {
 
     return theme;
   } catch (error) {
+    // 本地离线版没有云数据库：任何失败（未配置 DATABASE_URL、无网络）都退化成
+    // "拿不到这个云端主题"，让编辑器用默认主题继续工作，而不是整页报错。
     logError(error as Error, { action: "getTheme", themeId });
-    throw error;
+    return null;
   }
 });
 

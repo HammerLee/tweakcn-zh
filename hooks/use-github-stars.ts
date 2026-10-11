@@ -1,33 +1,22 @@
 import useSWR from "swr";
 
-interface GitHubStarsResponse {
-  stargazers_count: number;
-}
-
-async function fetchGithubStars(
-  owner: string,
-  repo: string
-): Promise<GitHubStarsResponse> {
-  const response = await fetch(`https://api.github.com/repos/${owner}/${repo}`);
-  if (!response.ok) {
-    throw new Error("Failed to fetch stargazers count");
-  }
-  return response.json();
+/**
+ * 离线：不再请求 api.github.com。
+ * 调用方（home/figma 头部的 star 数）保留接口，数量恒为 0 且不触发网络。
+ */
+async function fetchGithubStars(_owner: string, _repo: string): Promise<number> {
+  return 0;
 }
 
 export function useGithubStars(owner: string, repo: string) {
-  const { data, isLoading, error } = useSWR(
-    [owner, repo],
-    ([owner, repo]) => fetchGithubStars(owner, repo),
-    {
-      revalidateOnFocus: false,
-      dedupingInterval: 60000, // Revalidate at most once per minute
-    }
+  const { data, isLoading, error } = useSWR([owner, repo], ([owner, repo]) =>
+    fetchGithubStars(owner, repo)
   );
 
   return {
-    stargazersCount: data?.stargazers_count ?? 0,
+    stargazersCount: data ?? 0,
     isLoading,
     error: error as Error | null,
   };
 }
+

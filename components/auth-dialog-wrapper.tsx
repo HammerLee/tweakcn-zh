@@ -5,12 +5,12 @@ import { useAuthStore } from "@/store/auth-store";
 import { useEffect } from "react";
 import { authClient } from "@/lib/auth-client";
 import { executePostLoginAction } from "@/hooks/use-post-login-action";
-import { usePostHog } from "posthog-js/react";
+import { useAnalytics } from "@/lib/analytics";
 
 export function AuthDialogWrapper() {
   const { isOpen, mode, closeAuthDialog, postLoginAction, clearPostLoginAction } = useAuthStore();
   const { data: session } = authClient.useSession();
-  const posthog = usePostHog();
+  const posthog = useAnalytics();
 
   useEffect(() => {
     if (isOpen && session) {

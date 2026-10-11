@@ -15,7 +15,8 @@ import {
 } from "@/components/ui/revola";
 import { useCopyToClipboard } from "@/hooks/use-copy-to-clipboard";
 import { Check, Copy } from "lucide-react";
-import { usePostHog } from "posthog-js/react";
+import { useAnalytics } from "@/lib/analytics";
+import { getAppOrigin } from "@/lib/app-url";
 
 interface MCPDialogProps {
   open: boolean;
@@ -28,7 +29,7 @@ const mcpConfig = {
       command: "npx",
       args: ["-y", "shadcn@canary", "registry:mcp"],
       env: {
-        REGISTRY_URL: "https://tweakcn.com/r/themes/registry.json",
+        REGISTRY_URL: `${getAppOrigin()}/r/themes/registry.json`,
       },
     },
   },
@@ -36,7 +37,7 @@ const mcpConfig = {
 
 export function MCPDialog({ open, onOpenChange }: MCPDialogProps) {
   const { hasCopied, copyToClipboard } = useCopyToClipboard();
-  const posthog = usePostHog();
+  const posthog = useAnalytics();
 
   const handleCopy = async (config: typeof mcpConfig) => {
     copyToClipboard(JSON.stringify(config, null, 2));

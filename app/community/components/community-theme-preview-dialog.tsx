@@ -20,6 +20,7 @@ import ExamplesPreviewContainer from "@/components/editor/theme-preview/examples
 import { Heart, Moon, Sun, ArrowUpRight, ChevronLeft, ChevronRight, Share2 } from "lucide-react";
 import { toast } from "@/components/ui/use-toast";
 import type { CommunityTheme } from "@/types/community";
+import { getAppOrigin } from "@/lib/app-url";
 
 const DemoCards = lazy(() => import("@/components/examples/cards"));
 
@@ -104,7 +105,7 @@ export function CommunityThemePreviewDialog({
   };
 
   const handleShare = () => {
-    const url = `https://tweakcn.com/themes/${theme.themeId}`;
+    const url = `${getAppOrigin()}/themes/${theme.themeId}`;
     navigator.clipboard.writeText(url);
     toast({
       title: "Theme URL copied to clipboard!",

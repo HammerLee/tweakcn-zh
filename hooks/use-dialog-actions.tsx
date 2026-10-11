@@ -11,8 +11,9 @@ import { useAuthStore } from "@/store/auth-store";
 import { useEditorStore } from "@/store/editor-store";
 import { useThemePresetStore } from "@/store/theme-preset-store";
 import { parseCssInput } from "@/utils/parse-css-input";
-import { usePostHog } from "posthog-js/react";
+import { useAnalytics } from "@/lib/analytics";
 import { createContext, ReactNode, useContext, useState } from "react";
+import { getAppOrigin } from "@/lib/app-url";
 
 type PendingAction = "share" | "v0" | null;
 
@@ -82,7 +83,7 @@ function useDialogActionsStore(): DialogActionsContextType {
   const createThemeMutation = useCreateTheme();
   const updateThemeMutation = useUpdateTheme();
   const { isGeneratingTheme } = useAIThemeGenerationCore();
-  const posthog = usePostHog();
+  const posthog = useAnalytics();
 
   const currentPreset = themeState?.preset ? getPreset(themeState.preset) : undefined;
   const isOnSavedPreset = !!currentPreset && currentPreset.source === "SAVED" && hasUnsavedChanges();
@@ -178,7 +179,7 @@ function useDialogActionsStore(): DialogActionsContextType {
     const currentPreset = presetId ? getPreset(presetId) : undefined;
 
     if (!currentPreset) {
-      setShareUrl(`https://tweakcn.com/editor/theme`);
+      setShareUrl(`${getAppOrigin()}/editor/theme`);
       setShareDialogOpen(true);
       return;
     }
@@ -192,8 +193,8 @@ function useDialogActionsStore(): DialogActionsContextType {
     });
 
     const url = isSavedPreset
-      ? `https://tweakcn.com/themes/${id}`
-      : `https://tweakcn.com/editor/theme?theme=${id}`;
+      ? `${getAppOrigin()}/themes/${id}`
+      : `${getAppOrigin()}/editor/theme?theme=${id}`;
 
     setShareUrl(url);
     setShareDialogOpen(true);
@@ -216,8 +217,8 @@ function useDialogActionsStore(): DialogActionsContextType {
     });
 
     const themeUrl = isSavedPreset
-      ? `https://tweakcn.com/r/v0/${presetId}`
-      : `https://tweakcn.com/r/v0/${presetId}.json`;
+      ? `${getAppOrigin()}/r/v0/${presetId}`
+      : `${getAppOrigin()}/r/v0/${presetId}.json`;
     const title = `"${themeName}" from tweakcn`.slice(0, 32);
     const v0Url = `https://v0.dev/chat/api/open?url=${encodeURIComponent(themeUrl)}&title=${encodeURIComponent(title)}`;
     window.open(v0Url, "_blank", "noopener,noreferrer");

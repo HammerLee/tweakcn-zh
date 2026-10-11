@@ -1,7 +1,8 @@
 import { getTheme } from "@/actions/themes";
 import { getCommunityDataForTheme } from "@/actions/community-themes";
 import ThemeView from "@/components/theme-view";
-import { Metadata } from "next";
+import { type Metadata } from "next";
+import { notFound } from "next/navigation";
 
 interface ThemePageProps {
   params: Promise<{
@@ -50,6 +51,9 @@ export default async function ThemePage({ params }: ThemePageProps) {
     getTheme(themeId),
     getCommunityDataForTheme(themeId),
   ]);
+
+  // 离线版本地没有云主题，getTheme 拿不到时返回 null
+  if (!theme) notFound();
 
   return (
     <div className="flex flex-1 flex-col">

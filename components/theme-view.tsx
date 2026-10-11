@@ -17,6 +17,7 @@ import { CodeButton } from "./editor/action-bar/components/code-button";
 import { CodePanelDialog } from "./editor/code-panel-dialog";
 import ThemePreviewPanel from "./editor/theme-preview-panel";
 import { DialogActionsProvider } from "@/hooks/use-dialog-actions";
+import { getAppOrigin } from "@/lib/app-url";
 
 interface CommunityData {
   communityThemeId: string;
@@ -72,7 +73,7 @@ export default function ThemeView({ theme, communityData }: ThemeViewProps) {
   };
 
   const handleShare = () => {
-    const url = `https://tweakcn.com/themes/${theme.id}`;
+    const url = `${getAppOrigin()}/themes/${theme.id}`;
     navigator.clipboard.writeText(url);
     toast({
       title: "Theme URL copied to clipboard!",
@@ -149,7 +150,7 @@ export default function ThemeView({ theme, communityData }: ThemeViewProps) {
 
       <DialogActionsProvider>
         <div className="-m-4 mt-6 flex h-[min(80svh,900px)] flex-col">
-          <ThemePreviewPanel styles={theme.styles} currentMode={currentMode} themeId={theme.id} themeName={theme.name} />
+          <ThemePreviewPanel styles={theme.styles} currentMode={currentMode} />
         </div>
 
         <CodePanelDialog

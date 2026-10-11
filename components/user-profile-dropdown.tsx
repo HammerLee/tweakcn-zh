@@ -20,13 +20,13 @@ import { BookLock, Gem, Loader2, LogOut, Moon, Settings, Sun } from "lucide-reac
 import { AnimatePresence, motion } from "motion/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { usePostHog } from "posthog-js/react";
+import { useAnalytics } from "@/lib/analytics";
 
 export function UserProfileDropdown() {
   const { data: session, isPending } = authClient.useSession();
   const { openAuthDialog } = useAuthStore();
   const { theme, toggleTheme } = useTheme();
-  const posthog = usePostHog();
+  const posthog = useAnalytics();
   const router = useRouter();
 
   const { subscriptionStatus } = useSubscription();

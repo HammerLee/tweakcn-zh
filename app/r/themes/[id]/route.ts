@@ -22,7 +22,11 @@ export async function GET(_req: Request, { params }: { params: Promise<{ id: str
       themeStyles = builtInTheme.styles;
     } else {
       // Fall back to database lookup for user-saved themes
+      // 离线版没有云数据库，getTheme 取不到时返回 null，这里直接给 404。
       const theme = await getTheme(id);
+      if (!theme) {
+        return NextResponse.json({ error: `Theme ${id} not found` }, { status: 404 });
+      }
       themeName = theme.name;
       themeStyles = theme.styles;
     }

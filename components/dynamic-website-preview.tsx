@@ -26,8 +26,9 @@ import {
   X,
   XCircle,
 } from "lucide-react";
-import { usePostHog } from "posthog-js/react";
+import { useAnalytics } from "@/lib/analytics";
 import React, { useEffect, useRef } from "react";
+import { getAppOrigin } from "@/lib/app-url";
 
 /**
  * Dynamic Website Preview - Load and theme external websites
@@ -44,7 +45,8 @@ import React, { useEffect, useRef } from "react";
  * external website theming via the embed script.
  */
 
-const SCRIPT_URL = "https://tweakcn.com/live-preview.min.js";
+// 离线：嵌入脚本就在本站 public/ 下，指向当前实例而不是 tweakcn.com
+const SCRIPT_URL = `${getAppOrigin()}/live-preview.min.js`;
 
 // Code snippets for quick installation across common setups
 const HTML_SNIPPET = `<!-- Add inside <head> -->\n<script src="${SCRIPT_URL}"></script>`;
@@ -152,7 +154,7 @@ function DynamicWebsitePreviewProvider({
   allowCrossOrigin?: boolean;
 }) {
   const websitePreviewState = useWebsitePreview({ allowCrossOrigin });
-  const posthog = usePostHog();
+  const posthog = useAnalytics();
 
   const { status, retryValidation, themeInjectionError } = useIframeThemeInjector({
     allowCrossOrigin: allowCrossOrigin && !!websitePreviewState.currentUrl,

@@ -30,33 +30,23 @@ function checkShadcnSupport() {
 };
 
 // ----- FONT LOADING UTILITIES -----
-const DEFAULT_FONT_WEIGHTS = ["400", "500", "600", "700"];
 
-function extractFontFamily(fontFamilyValue) {
-  if (!fontFamilyValue) return null;
-  const firstFont = fontFamilyValue.split(",")[0].trim();
-  const cleanFont = firstFont.replace(/['"]/g, "");
-  const systemFonts = [
-    "ui-sans-serif", "ui-serif", "ui-monospace", "system-ui",
-    "sans-serif", "serif", "monospace", "cursive", "fantasy"
-  ];
-  if (systemFonts.includes(cleanFont.toLowerCase())) return null;
-  return cleanFont;
-}
+// 离线版本：字体已经全部打包进 public/fonts/fonts.css，这里只按脚本自身来源的站点
+// 拼出本地 CSS 地址，不再请求 fonts.googleapis.com。
+const LOCAL_FONTS_CSS_PATH = "/fonts/fonts.css";
 
-function buildFontCssUrl(family, weights) {
-  weights = weights || DEFAULT_FONT_WEIGHTS;
-  const encodedFamily = encodeURIComponent(family);
-  const weightsParam = weights.join(";"); 
-  return `https://fonts.googleapis.com/css2?family=${encodedFamily}:wght@${weightsParam}&display=swap`;
-}
+// document.currentScript 只在脚本同步执行时有效，所以在这里就把来源站点记下来。
+const TWEAKCN_ORIGIN = (() => {
+  const src = document.currentScript && document.currentScript.src;
+  if (src) {
+    try { return new URL(src).origin; } catch (_) { /* 回退到当前页面 */ }
+  }
+  return window.location.origin;
+})();
 
-function loadGoogleFont(family, weights) {
-  weights = weights || DEFAULT_FONT_WEIGHTS;
-  const href = buildFontCssUrl(family, weights);
-  const existing = document.querySelector(`link[href="${href}"]`);
-  if (existing) return;
-
+function loadLocalFonts() {
+  const href = `${TWEAKCN_ORIGIN}${LOCAL_FONTS_CSS_PATH}`;
+  if (document.querySelector(`link[href="${href}"]`)) return;
   const link = document.createElement("link");
   link.rel = "stylesheet";
   link.href = href;
@@ -178,12 +168,7 @@ function loadThemeFonts(root, themeStyles) {
       mono: themeStyles["font-mono"],
     };
   
-     Object.entries(currentFonts).forEach(([_type, fontValue]) => {
-      const fontFamily = extractFontFamily(fontValue);
-      if (fontFamily) {
-        loadGoogleFont(fontFamily, DEFAULT_FONT_WEIGHTS);
-      }
-    });    
+    loadLocalFonts();
 
     // Override font classes with theme fonts
     overrideFontClasses(root, currentFonts);

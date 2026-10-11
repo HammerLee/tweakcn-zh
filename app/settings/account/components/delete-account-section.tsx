@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { usePostHog } from "posthog-js/react";
+import { useAnalytics } from "@/lib/analytics";
 import { AlertTriangle, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -26,7 +26,7 @@ export function DeleteAccountSection() {
   const [confirmText, setConfirmText] = useState("");
   const [isDeleting, setIsDeleting] = useState(false);
   const router = useRouter();
-  const posthog = usePostHog();
+  const posthog = useAnalytics();
 
   const isConfirmed = confirmText === CONFIRMATION_TEXT;
 
